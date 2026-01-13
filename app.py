@@ -3,6 +3,8 @@
 import streamlit as st
 from transformers import pipeline
 from PIL import Image
+import pandas as pd
+import altair as alt
 
 # 1. 페이지 기본 설정
 st.set_page_config(
@@ -57,7 +59,27 @@ if uploaded_file is not None:
             st.write("신뢰도 :")
             st.progress(score)
 
+            # top-5 상위 결과 보여주기
+            st.subheader("상세 결과 (Top-5)")
+
+            data = pd.DataFrame(predictions)
+            data['score'] = data['score'] * 100
+
+            chart = alt.Chart(data).mark_bar().encode(
+                x = alt.X('score', title='확률 (%)'),
+                y = alt.Y('label', sort='-x', title='예측 클래스'),
+                color = alt.value('#4E9F3D'),
+                tooltip=['label', alt.Tooltip('score', format='.1f')]
+            ).properties(
+                height=300
+            )
+
+            st.altair_chart(chart, use_container_width=True)
+
+
+
             # 상위 5개 결과보여주기
-            with st.expander("다른 후보들 보기"):
+            with st.expander("후보 내용 상세보기"):
                 for pred in predictions:
-                    st.write(f"{pred['label']}: {pred['score']*100:.1f}%")
+                    st.write(f"{pred['label']}: {pred['score']*10
+                    0:.1f}%")
