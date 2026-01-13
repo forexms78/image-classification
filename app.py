@@ -75,11 +75,3 @@ if uploaded_file is not None:
             )
 
             st.altair_chart(chart, use_container_width=True)
-
-
-
-            # 상위 5개 결과보여주기
-            with st.expander("후보 내용 상세보기"):
-                for pred in predictions:
-                    st.write(f"{pred['label']}: {pred['score']*10
-                    0:.1f}%")
